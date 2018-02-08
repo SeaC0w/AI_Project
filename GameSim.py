@@ -5,9 +5,9 @@ class Game:
 	MAX = 1
 	turn = MAX
 	gameBoard = []
-	WHITEKING = "wk"
-	WHITEQUEEN = "wq"
-	BLACKKING = "bk"
+	WHITEKING = "wking"
+	WHITEQUEEN = "wqueen"
+	BLACKKING = "bking"
 
 	def __init__(self):
 		#instantiate ChessSimAI
@@ -80,7 +80,7 @@ def main():
 	#for x in range (0, 30):
 		if (game.getTurn() == game.MAX):
 			#game.makeHumanMove()
-			#Update graphics
+			#Update graphics game.graphicobject.updategraphics(game.board)
 			game.changeTurn()
 			
 
