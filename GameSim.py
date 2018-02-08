@@ -4,17 +4,56 @@ class Game:
 	MIN = 0
 	MAX = 1
 	turn = MAX
+	gameBoard = []
+	WHITEKING = "wk"
+	WHITEQUEEN = "wq"
+	BLACKKING = "bk"
 
 	def __init__(self):
 		#instantiate ChessSimAI
 		#instantiate BoardGraphics
-		pass
+		self.gameBoard = self.setUpBoard()
+		
 
 
+	def setUpBoard(self):
+		gameBoard = [[0 for i in range(8)] for j in range(8)]
+		gameBoard[0][3] = self.WHITEQUEEN
+		gameBoard[1][5] = self.WHITEKING
+		gameBoard[6][7] = self.BLACKKING
+		return gameBoard
+		
+
+	#The human move clicks on a piece, and then clicks on where to move it. Then
+	def makeHumanMove(self):
+		coor1 = None
+		coor2 = None
+		pieceSelected = None
+		while not self.isValidMove(coor1, coor2, pieceSelected):
+			pass
+			#acquire coordinates of first click
+			#pieceSelected = self.getPieceType(coor1)
+			#acquire coordinates of second click
+		self.updateBoard(coor1, coor2, pieceSelected)
+
+	def getPieceType(self, coordinates):
+		return self.gameBoard[coordinates[0]][coordinates[1]]
+
+	def isValidMove(self, coor1, coor2, pieceType):
+		# if(coor1, coor2, pieceType == None, None, None):
+		# 	return False
+		# else:
+		# 	#Check here if move is valid
+
+		return True
 
 
 	def makeAIMove(self):
 		pass
+
+	def updateBoard(self, startCoordinates, endCoordinates, pieceSelected):
+		self.gameBoard[startCoordinates[0]][startCoordinates[1]] = 0
+		self.gameBoard[endCoordinates[0]][endCoordinates[1]] = pieceSelected
 
 	def gameNotDone(self):
 		return True
@@ -30,20 +69,29 @@ class Game:
 
 
 
+
+
 #Main Simulation
 def main():
 
 	game = Game()
 
-	while game.gameNotDone():
+	#while game.gameNotDone():
+	#for x in range (0, 30):
 		if (game.getTurn() == game.MAX):
-			print "MAX"
+			#game.makeHumanMove()
+			#Update graphics
 			game.changeTurn()
-		else:
-			print "MIN"
-			game.changeTurn()
+			
 
-	print "How about this?"
+
+		else:
+			game.makeAIMove()
+			#Update graphics
+			game.changeTurn()
+			
+
+	print game.gameBoard
 
 
 main()
