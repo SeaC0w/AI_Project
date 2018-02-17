@@ -33,11 +33,11 @@ class Game:
 
 	#The human move clicks on a piece, and then clicks on where to move it. Then
 	def makeHumanMove(self):
-		coor1 = None
-		coor2 = None
+		coor1 = [6, 7]
+		coor2 = [5, 7]
 		pieceSelected = None
-		while not self.isValidMove(coor1, coor2, pieceSelected):
-			pass
+		#while not self.isValidMove(coor1, coor2, pieceSelected):
+			#pass
 			#acquire coordinates of first click
 			#pieceSelected = self.getPieceType(coor1)
 			#acquire coordinates of second click
@@ -59,7 +59,7 @@ class Game:
 
 	#The AI opponent makes a move
 	def makeAIMove(self):
-		AImove = self.AI.makeAIMove()
+		AImove = self.AI.makeAIMove(self.gameBoard)
 		coor1 = AImove[0]
 		coor2 = AImove[1]
 		self.updateBoard(coor1, coor2)
@@ -94,9 +94,9 @@ def main():
 	game = Game()
 
 	#while game.gameNotDone():
-	for x in range (0, 30):
+	for x in range (0, 2):
 		if (game.getTurn() == game.MAX):
-			#game.makeHumanMove()
+			game.makeHumanMove()
 			#Update graphics game.graphicobject.updategraphics(game.board)
 			game.changeTurn()
 			
@@ -109,6 +109,7 @@ def main():
 			
 
 	print game.gameBoard
+	print game.getTurn()
 
 
 main()
