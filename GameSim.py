@@ -1,3 +1,5 @@
+from ChessSimAI import *
+
 
 class Game:
 
@@ -8,9 +10,12 @@ class Game:
 	WHITEKING = "wking"
 	WHITEQUEEN = "wqueen"
 	BLACKKING = "bking"
+	AI = ChessSimAI()
+
+
+	#-------------------INITIALIZATION-------------------#
 
 	def __init__(self):
-		#instantiate ChessSimAI
 		#instantiate BoardGraphics
 		self.gameBoard = self.setUpBoard()
 		
@@ -24,6 +29,8 @@ class Game:
 		return gameBoard
 		
 
+	#-------------------------------HUMAN MOVE FUNCTIONS---------------------------#
+
 	#The human move clicks on a piece, and then clicks on where to move it. Then
 	def makeHumanMove(self):
 		coor1 = None
@@ -34,11 +41,12 @@ class Game:
 			#acquire coordinates of first click
 			#pieceSelected = self.getPieceType(coor1)
 			#acquire coordinates of second click
-		self.updateBoard(coor1, coor2, pieceSelected)
+		self.updateBoard(coor1, coor2)
 
 	def getPieceType(self, coordinates):
 		return self.gameBoard[coordinates[0]][coordinates[1]]
 
+	#Checks to see if a human move is valid
 	def isValidMove(self, coor1, coor2, pieceType):
 		# if(coor1, coor2, pieceType == None, None, None):
 		# 	return False
@@ -47,11 +55,20 @@ class Game:
 
 		return True
 
+	#---------------------AI MOVE FUNCTIONS------------------------#
 
+	#The AI opponent makes a move
 	def makeAIMove(self):
-		pass
+		AImove = self.AI.makeAIMove()
+		coor1 = AImove[0]
+		coor2 = AImove[1]
+		self.updateBoard(coor1, coor2)
 
-	def updateBoard(self, startCoordinates, endCoordinates, pieceSelected):
+
+	#--------------------GENERAL GAME FUNCTIONALITY--------------------#
+
+	def updateBoard(self, startCoordinates, endCoordinates):
+		pieceSelected = self.gameBoard[startCoordinates[0]][startCoordinates[1]]
 		self.gameBoard[startCoordinates[0]][startCoordinates[1]] = 0
 		self.gameBoard[endCoordinates[0]][endCoordinates[1]] = pieceSelected
 
@@ -77,7 +94,7 @@ def main():
 	game = Game()
 
 	#while game.gameNotDone():
-	#for x in range (0, 30):
+	for x in range (0, 30):
 		if (game.getTurn() == game.MAX):
 			#game.makeHumanMove()
 			#Update graphics game.graphicobject.updategraphics(game.board)
