@@ -64,9 +64,9 @@ class ChessSimAI:
 			for j in range (0,8):
 				if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k'):
 					pieceType = self.getPieceType(AIThreatRepresentation[i][j])
-					print pieceType
+					print (pieceType)
 					potentialMove = [i, j, pieceType]
-					print "Potenial Move is :" + str(potentialMove)
+					print ("Potenial Move is :", str(potentialMove))
 					space = self.calculateEnemySpace(potentialMove, AIThreatRepresentation)
 
 					#If our discovered move gets better space gain, we construct the new move as our move
