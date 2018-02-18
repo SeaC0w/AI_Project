@@ -14,6 +14,11 @@ class BoardGraphics():
 		self.boxes = []
 		self.whitePieces = []
 		self.blackPieces = []
+
+		self.rect = Rectangle(Point(5,5), Point(10,10))
+		self.rect.setFill("red")
+		self.rect.draw(self.window)
+
 		for row in range(8):
 			gridRow = []
 			p1y = (75 * row) + 25
@@ -28,9 +33,9 @@ class BoardGraphics():
 			self.boxes.append(gridRow)
 
 	def setMessage(self, s):
-		self.message.undraw()
+		# self.message.undraw()
 		self.message.setText(s)
-		self.message.draw(self.window)
+		# self.message.draw(self.window)
 
 	#pieceData = [row, column, player, image, pieceType]
 	def initPiece(self, data):
@@ -48,10 +53,12 @@ class BoardGraphics():
 	def checkforPieceAt(self, player, row, col):
 		if player == 0:
 			for p in self.whitePieces:
+				print(p.row, p.column)
 				if p.row == row and p.column == col:
 					return p
 			return False
 		elif player == 1:
+			print(p.row, p.column)
 			for p in self.blackPieces:
 				if p.row == row and p.col == col:
 					return p
@@ -61,8 +68,8 @@ class BoardGraphics():
 			return False
 
 	def setupOne(self):
-		wking = self.initPiece([0, 7, 0, "wking.png", "king"])
-		wqueen = self.initPiece([4, 7, 0, "wqueen.png", "queen"])
+		wking = self.initPiece([7, 0, 0, "wking.png", "king"])
+		wqueen = self.initPiece([7, 4, 0, "wqueen.png", "queen"])
 		bking = self.initPiece([0, 0, 1, "bking.png", "king"])
 		if not wking or not wqueen or not bking:
 			self.setMessage("Pieces couldnt be placed")
@@ -86,15 +93,17 @@ class BoardGraphics():
 		while not clickValid:
 			self.setMessage("Click a piece to move")
 			click = self.window.getMouse()
-			clickX = int(click.getX()//75)
-			clickY = int(click.getY()//75)
+			clickX = int((click.getX() - 25)//75)
+			clickY = int((click.getY() - 25)//75)
+			print(clickX, clickY)
 			piece = self.checkforPieceAt(player, clickX, clickY)
 			if (piece):
-				click2valid = False
+				click2Valid = False
 				while not click2Valid:
+					self.setMessage("Click a space to move to")
 					click2 = self.window.getMouse()
-					click2x = int(click.getX()//75)
-					click2y = int(click.getY()//75)
+					click2x = int((click.getX() - 25)//75)
+					click2y = int((click.getY() - 25)//75)
 					if (click2x, click2y) in piece.validMoves():
 						self.setMessage(playName + " " + piece.type + " to" "(" + str(click2x) + "," + str(click2y) + ")")
 						piece.setDrawPosition(click2x, click2y)
@@ -119,8 +128,8 @@ class PieceGraphics():
 		self.type = pType
 		self.row = row
 		self.column = col
-		self.posX = 75 * col + 25
-		self.posY = 75 * row + 25
+		self.posX = 75 * row + 25
+		self.posY = 75 * col + 25
 		self.image = image
 		self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), image)
 
@@ -131,8 +140,8 @@ class PieceGraphics():
 		self.im.undraw()
 
 	def setDrawPosition(self, row, col):
-		self.posX = 75 * col + 25
-		self.posY = 75 * row + 25
+		self.posX = 75 * row + 25
+		self.posY = 75 * col + 25
 		self.undrawPiece()
 		self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), self.image)
 
