@@ -1,13 +1,19 @@
 from graphics import *
 
-windowHeight = 650
+windowHeight = 800
 windowWidth = 650
 
 class BoardGraphics():
 	def __init__(self):
 		self.window = GraphWin("Chess Board", windowWidth, windowHeight)
 		# self.window.setCoords(25, 25, windowWidth-25, windowHeight-25)
+		self.validPieces = ["king", "queen"]
+		self.message = Text(Point(325, 725), 650)
+		self.message.setText('Game start')
+		self.message.draw(self.window)
 		self.boxes = []
+		self.whitePieces = []
+		self.blackPieces = []
 		for row in range(8):
 			gridRow = []
 			p1y = (75 * row) + 25
@@ -21,44 +27,125 @@ class BoardGraphics():
 				gridRow.append(curr)
 			self.boxes.append(gridRow)
 
+	def setMessage(self, s):
+		self.message.undraw()
+		self.message.setText(s)
+		self.message.draw(self.window)
+
+	#pieceData = [row, column, player, image, pieceType]
+	def initPiece(self, data):
+		player = data[2]
+		piece = PieceGraphics(data[3], data[0], data[1], data[4])
+		if player == 0:
+			self.whitePieces.append(piece)
+		elif player == 1:
+			self.blackPieces.append(piece)
+		else:
+			self.setMessage("Invalid player assignment for piece")
+			return
+		return piece
+
+	def checkforPieceAt(self, player, row, col):
+		if player == 0:
+			for p in self.whitePieces:
+				if p.row == row and p.column == col:
+					return p
+			return False
+		elif player == 1:
+			for p in self.blackPieces:
+				if p.row == row and p.col == col:
+					return p
+			return False
+		else:
+			self.setMessage("Invalid player argument")
+			return False
+
 	def setupOne(self):
-		bking = PieceGraphics("bking.png", 0, 8)
-		bqueen = PieceGraphics("bqueen.png", 4, 8)
-		wking = PieceGraphics("wking.png", 0, 0)
-		bking.drawPiece(self.window)
-		bqueen.drawPiece(self.window)
+		wking = self.initPiece([0, 7, 0, "wking.png", "king"])
+		wqueen = self.initPiece([4, 7, 0, "wqueen.png", "queen"])
+		bking = self.initPiece([0, 0, 1, "bking.png", "king"])
+		if not wking or not wqueen or not bking:
+			self.setMessage("Pieces couldnt be placed")
 		wking.drawPiece(self.window)
+		wqueen.drawPiece(self.window)
+		bking.drawPiece(self.window)
 
 	def drawGrid(self):
 		for row in self.boxes:
 			for item in row:
 				item.draw(self.window)
 
+	def playTurn(self, player):
+		playName = ""
+		if player == 0:
+			playName = "White"
+		else:
+			playName = "Black"
+		self.setMessage(playName + " player's turn:")
+		clickValid = False
+		while not clickValid:
+			self.setMessage("Click a piece to move")
+			click = self.window.getMouse()
+			clickX = int(click.getX()//75)
+			clickY = int(click.getY()//75)
+			piece = self.checkforPieceAt(player, clickX, clickY)
+			if (piece):
+				click2valid = False
+				while not click2Valid:
+					click2 = self.window.getMouse()
+					click2x = int(click.getX()//75)
+					click2y = int(click.getY()//75)
+					if (click2x, click2y) in piece.validMoves():
+						self.setMessage(playName + " " + piece.type + " to" "(" + str(click2x) + "," + str(click2y) + ")")
+						piece.setDrawPosition(click2x, click2y)
+						piece.drawPiece(self.window)
+						click2Valid = True
+					else:
+						self.setMessage("That location is not a valid move, choose again!")
+				clickValid = True
+			else:
+				self.setMessage("No piece belonging to you at (" + str(clickX) + "," + str(clickY) + "),")
+				print("No piece belonging to you at (" + str(clickX) + "," + str(clickY) + "),")
 
 	def endRun(self):
 		self.window.close()
 
 class PieceGraphics():
-	def __init__(self, image, row, col):
+	def __init__(self, image, row, col, pType):
+		if (row < 0 or row > 7):
+			return False
+		if (col < 0 or col > 7):
+			return False
+		self.type = pType
+		self.row = row
+		self.column = col
 		self.posX = 75 * col + 25
 		self.posY = 75 * row + 25
-		self.object = Image(Point(self.posX, self.posY), image)
+		self.image = image
+		self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), image)
 
 	def drawPiece(self, window):
-		self.object.draw(window)
+		self.im.draw(window)
 
 	def undrawPiece(self):
-		self.object.undraw()
+		self.im.undraw()
 
-	def setBoardPosition(self, row, col):
+	def setDrawPosition(self, row, col):
 		self.posX = 75 * col + 25
 		self.posY = 75 * row + 25
+		self.undrawPiece()
+		self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), self.image)
+
 
 def main():
 	b = BoardGraphics()
 	b.drawGrid()
+	print("hi")
 	b.setupOne()
-	time.sleep(15)
+	# b.setMessage("yoyoyo")
+	# time.sleep(5)
+	for i in range(10):
+		b.playTurn(i % 2)
 	b.endRun()
 
 if __name__ == "__main__":
