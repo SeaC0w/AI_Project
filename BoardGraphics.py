@@ -53,14 +53,14 @@ class BoardGraphics():
 	def checkforPieceAt(self, player, row, col):
 		if player == 0:
 			for p in self.whitePieces:
-				print(p.row, p.column)
+				# print(p.row, p.column)
 				if p.row == row and p.column == col:
 					return p
 			return False
 		elif player == 1:
-			print(p.row, p.column)
 			for p in self.blackPieces:
-				if p.row == row and p.col == col:
+				# print(p.row, p.column)
+				if p.row == row and p.column == col:
 					return p
 			return False
 		else:
@@ -90,23 +90,30 @@ class BoardGraphics():
 			playName = "Black"
 		self.setMessage(playName + " player's turn:")
 		clickValid = False
+		self.setMessage("Click a piece to move")
 		while not clickValid:
-			self.setMessage("Click a piece to move")
 			click = self.window.getMouse()
 			clickX = int((click.getX() - 25)//75)
 			clickY = int((click.getY() - 25)//75)
-			print(clickX, clickY)
+			# print(clickX, clickY)
 			piece = self.checkforPieceAt(player, clickX, clickY)
 			if (piece):
 				click2Valid = False
+				self.setMessage("Click a space to move to")
 				while not click2Valid:
-					self.setMessage("Click a space to move to")
 					click2 = self.window.getMouse()
-					click2x = int((click.getX() - 25)//75)
-					click2y = int((click.getY() - 25)//75)
-					if (click2x, click2y) in piece.validMoves():
+					click2x = int((click2.getX() - 25)//75)
+					click2y = int((click2.getY() - 25)//75)
+					# print(click2x, click2y)
+					if (click2x, click2y) in piece.validMoves:
 						self.setMessage(playName + " " + piece.type + " to" "(" + str(click2x) + "," + str(click2y) + ")")
-						piece.setDrawPosition(click2x, click2y)
+						piece.undrawPiece()
+						# piece.setDrawPosition(click2x, click2y)
+						piece.row = click2x
+						piece.cloumn = click2y
+						piece.posX = 75 * click2x + 25
+						piece.posY = 75 * click2y + 25
+						piece.im = Image(Point(piece.posX + 37.5, piece.posY + 37.5), piece.image)
 						piece.drawPiece(self.window)
 						click2Valid = True
 					else:
@@ -114,7 +121,6 @@ class BoardGraphics():
 				clickValid = True
 			else:
 				self.setMessage("No piece belonging to you at (" + str(clickX) + "," + str(clickY) + "),")
-				print("No piece belonging to you at (" + str(clickX) + "," + str(clickY) + "),")
 
 	def endRun(self):
 		self.window.close()
@@ -132,6 +138,10 @@ class PieceGraphics():
 		self.posY = 75 * col + 25
 		self.image = image
 		self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), image)
+		self.validMoves = []
+		for i in range(8):
+			for j in range(8):
+				self.validMoves.append((i,j))
 
 	def drawPiece(self, window):
 		self.im.draw(window)
@@ -140,16 +150,18 @@ class PieceGraphics():
 		self.im.undraw()
 
 	def setDrawPosition(self, row, col):
+		self.row = row
+		self.column = col
 		self.posX = 75 * row + 25
 		self.posY = 75 * col + 25
 		self.undrawPiece()
-		self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), self.image)
+		# print("should undraw")
+		# self.im = Image(Point(self.posX + 37.5, self.posY + 37.5), self.image)
 
 
 def main():
 	b = BoardGraphics()
 	b.drawGrid()
-	print("hi")
 	b.setupOne()
 	# b.setMessage("yoyoyo")
 	# time.sleep(5)
