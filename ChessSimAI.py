@@ -33,8 +33,28 @@ class ChessSimAI:
 	#with q's
 	#Returns a board with altered values
 	def AIThreatRepresentation(self, move, board):
-		board[2][4] = "k"
-		return board
+		tempBoard = board
+		tempBoard[2][4] = "k"
+		wqueenPosition = None
+		wkingPosition = None
+		rowNum = 0
+		colNum = 0
+		for row in tempBoard:
+			for col in row:
+				if (col == "wqueen"):
+					wqueenPosition = [rowNum, colNum]
+				elif(col == "wking"):
+					wkingPosition = [rowNum, colNum]
+
+				colNum += 1
+			rowNum += 1
+
+		print (wqueenPosition)
+		print (wkingPosition)
+
+
+
+		return tempBoard
 
 	#Builds a temporary board for the purpose of the AITHreatRepresentation
 	def testBoard(self, position, board):
@@ -62,7 +82,7 @@ class ChessSimAI:
 
 		for i in range (0, 8):
 			for j in range (0,8):
-				if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k'):
+				if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k' or AIThreatRepresentation[i][j] == "qk"):
 					pieceType = self.getPieceType(AIThreatRepresentation[i][j])
 					print (pieceType)
 					potentialMove = [i, j, pieceType]
