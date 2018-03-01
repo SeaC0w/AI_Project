@@ -1,4 +1,5 @@
 from ChessSimAI import *
+from BoardGraphics import *
 
 
 class Game:
@@ -11,12 +12,14 @@ class Game:
 	WHITEQUEEN = "wqueen"
 	BLACKKING = "bking"
 	AI = ChessSimAI()
+	boardGraphics = None
 
 
 	#-------------------INITIALIZATION-------------------#
 
 	def __init__(self):
 		#instantiate BoardGraphics
+		self.boardGraphics = BoardGraphics()
 		self.gameBoard = self.setUpBoard()
 		
 
@@ -24,7 +27,7 @@ class Game:
 	def setUpBoard(self):
 		gameBoard = [[0 for i in range(8)] for j in range(8)]
 		gameBoard[0][3] = self.WHITEQUEEN
-		gameBoard[1][5] = self.WHITEKING
+		gameBoard[0][4] = self.WHITEKING
 		gameBoard[6][7] = self.BLACKKING
 		return gameBoard
 		
@@ -33,8 +36,8 @@ class Game:
 
 	#The human move clicks on a piece, and then clicks on where to move it. Then
 	def makeHumanMove(self):
-		coor1 = [6, 7]
-		coor2 = [5, 7]
+		coor1 = [6, 7] #Temp
+		coor2 = [5, 7] #temp
 		pieceSelected = None
 		#while not self.isValidMove(coor1, coor2, pieceSelected):
 			#pass
@@ -108,8 +111,8 @@ def main():
 			game.changeTurn()
 			
 
-	print game.gameBoard
-	print game.getTurn()
+	#print (game.gameBoard)
+	#print (game.getTurn())
 
 
 main()
