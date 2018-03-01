@@ -1,23 +1,9 @@
-translate = ["a", "b", "c", "d", "e", "f", "g", "h"]
-piecesDict = {"Q":"wqueen", "K":"wking", "k":"bking", "q":"bqueen"}
+
 
 def moveToString(move):
+	translate = ["a", "b", "c", "d", "e", "f", "g", "h"]
 	return translate[move[0][0]] + str(move[0][1]) + translate[move[1][0]] + str(move[1][1])
 
-def fenToBoard(fen):
-	lines = fen.split("/")
-	board = []
-	for line in lines:
-		row = []
-		for char in line:
-			if char in list(piecesDict.keys()):
-				row.append(piecesDict[char])
-			else:
-				num = int(char)
-				for i in range(num):
-					row.append(0)
-		board.append(row)
-	return board
 
 class ChessSimAI:
 
@@ -194,9 +180,9 @@ class ChessSimAI:
 
 		bestSpace = 0
 		# move = [[0,0],[0,0]]
-		move = None
-		AIThreatRepresentation = self.AIThreatRepresentation(move, board)
-		print (AIThreatRepresentation)
+		move = [[0,0],[0,0]]
+		# AIThreatRepresentation = self.AIThreatRepresentation(move, board)
+		# print (AIThreatRepresentation)
 
 		# for i in range (0, 8):
 		# 	for j in range (0,8):
@@ -215,4 +201,5 @@ class ChessSimAI:
 
 
 		# print (move)
+		move = moveToString(move)
 		return move
