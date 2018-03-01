@@ -1,3 +1,24 @@
+translate = ["a", "b", "c", "d", "e", "f", "g", "h"]
+piecesDict = {"Q":"wqueen", "K":"wking", "k":"bking", "q":"bqueen"}
+
+def moveToString(move):
+	return translate[move[0][0]] + str(move[0][1]) + translate[move[1][0]] + str(move[1][1])
+
+def fenToBoard(fen):
+	lines = fen.split("/")
+	board = []
+	for line in lines:
+		row = []
+		for char in line:
+			if char in list(piecesDict.keys()):
+				row.append(piecesDict[char])
+			else:
+				num = int(char)
+				for i in range(num):
+					row.append(0)
+		board.append(row)
+	return board
+
 class ChessSimAI:
 
 
@@ -8,7 +29,7 @@ class ChessSimAI:
 
 	'''
 	We are calculating optimal moves for the AI based on the theory that minimization
-	of space for the enemy will lead to a swift checkmate. Here, we calculate the 
+	of space for the enemy will lead to a swift checkmate. Here, we calculate the
 	space the king could move around in regardless of the amount of turns without
 	moving into check.
 	@params: board state, position ([coor1, coor2, piecetype])
@@ -164,7 +185,7 @@ class ChessSimAI:
 		for i in range (0, 8):
 			for j in range (0,8):
 				if (board[i][j] == pieceType):
-					pos = [i,j] 
+					pos = [i,j]
 
 		return pos
 
@@ -188,19 +209,10 @@ class ChessSimAI:
 
 		# 			#If our discovered move gets better space gain, we construct the new move as our move
 		# 			if (space > bestSpace): #MIGHT NEED TO CHANGE THIS WILL GET STUCK IN LOOP PROBS
-		# 				curPiecePos = self.getCurrentPiecePosition(potentialMove[2], board) 
+		# 				curPiecePos = self.getCurrentPiecePosition(potentialMove[2], board)
 		# 				move = [curPiecePos ,[potentialMove[0], potentialMove[1]]]
 		# 				bestSpace = space
 
 
 		# print (move)
 		return move
-
-
-	
-
-
-
-
-
-	
