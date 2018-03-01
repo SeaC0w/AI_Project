@@ -27,7 +27,7 @@ class Game:
 	def setUpBoard(self):
 		gameBoard = [[0 for i in range(8)] for j in range(8)]
 		gameBoard[0][3] = self.WHITEQUEEN
-		gameBoard[1][5] = self.WHITEKING
+		gameBoard[0][4] = self.WHITEKING
 		gameBoard[6][7] = self.BLACKKING
 		return gameBoard
 		
@@ -111,8 +111,8 @@ def main():
 			game.changeTurn()
 			
 
-	print (game.gameBoard)
-	print (game.getTurn())
+	#print (game.gameBoard)
+	#print (game.getTurn())
 
 
 main()
