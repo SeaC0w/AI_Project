@@ -24,6 +24,7 @@ class ChessSimAI:
 	def calculateEnemySpace(self, move, board):
 		#Recalculate the AIThreatRepresentation for the move
 		threat = self.AIThreatRepresentation(move, board)
+		print threat
 		potentialEnemyMoves = self.findPotentialEnemyMoves(threat)
 		bKingPos = self.findPiecePos('bking', threat)
 		wQueenPosition = self.findPiecePos("wqueen", threat)
@@ -116,7 +117,12 @@ class ChessSimAI:
 	#with q's
 	#Returns a board with altered values
 	def AIThreatRepresentation(self, move, board):
-		tempBoard = copy(board)
+		tempBoard = []
+
+		for element in board:
+			tempBoard.append(copy(element))
+
+
 		if (move != None):
 			tempBoard[move[1][0]][move[1][1]] = tempBoard[move[0][0]][move[0][1]]
 			tempBoard[move[0][0]][move[0][1]] = 0
@@ -127,6 +133,8 @@ class ChessSimAI:
 
 		if (wqueenPosition != None):
 			tempBoard = self.AIThreatAdderQueen(wqueenPosition, tempBoard)
+
+		#print tempBoard
 		return tempBoard
 
 	#Helper method for the AIThreatRepresentation, actually added the values in for the king
@@ -262,12 +270,13 @@ class ChessSimAI:
 					
 					startPos = self.getCurrentPiecePosition(pieceType, board)
 					potentialMove = [startPos, [i, j]]
-					#print (board)
+					
 					space = self.calculateEnemySpace(potentialMove, board)
+					print space
 
 					#If our discovered move gets better space gain, we construct the new move as our move
 					if (space < bestSpace): 
-
+						print move
 						move = potentialMove
 						bestSpace = space
 
