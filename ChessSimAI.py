@@ -1,8 +1,8 @@
-
+from copy import *
 
 def moveToString(move):
 	translate = ["a", "b", "c", "d", "e", "f", "g", "h"]
-	return translate[move[0][0]] + str(move[0][1]) + translate[move[1][0]] + str(move[1][1])
+	return translate[move[0][0]] + str(8 - move[0][1]) + translate[move[1][0]] + str(8 - move[1][1])
 
 
 class ChessSimAI:
@@ -24,13 +24,90 @@ class ChessSimAI:
 	def calculateEnemySpace(self, move, board):
 		#Recalculate the AIThreatRepresentation for the move
 		threat = self.AIThreatRepresentation(move, board)
-		count = self.BFSCalcTotalNodes(threat)
-		return count
+		potentialEnemyMoves = self.findPotentialEnemyMoves(threat)
+		bKingPos = self.findPiecePos('bking', threat)
+		wQueenPosition = self.findPiecePos("wqueen", threat)
+		wKingPosition = self.findPiecePos("wking", threat)
+		mostSpace = 0
+		for move in potentialEnemyMoves:
+			tempBoard = [[0 for i in range(8)] for j in range(8)]
+			tempBoard[move[0]][move[1]] = 'bking'
+			tempBoard[wQueenPosition[0]][wQueenPosition[1]] = 'wqueen'
+			tempBoard[wKingPosition[0]][wKingPosition[1]] = 'wking' 
+			tempBoard = self.AIThreatRepresentation(None, tempBoard)
+			space = self.calcTotalAvailableSpace(move, tempBoard)
+			if (space > mostSpace):
+				mostSpace = space
+		return space
 
 	#Method that conducts a breadth first search given a position to see the amount
 	#of space given to the enemy king
-	def BFSCalcTotalNodes(self, tempBoard):
-		return 5
+	def calcTotalAvailableSpace(self, move, tempBoard):
+		posSeen = []
+		posUnseen = [move]
+		space = self.calcSpaceHelper(posSeen, posUnseen, tempBoard)
+		return space
+
+	def calcSpaceHelper(self, posSeen, posUnseen, tempBoard):
+
+		if(len(posUnseen) == 0):
+			return len(posSeen)
+
+		#for pos in posUnseen:
+		pos = posUnseen.pop()
+		posSeen.append(pos)
+		row = pos[0]
+		col = pos[1]
+		potentialUnseenFirstIteration = [[row-1, col-1], [row-1, col], [row-1, col +1], [row, col-1], [row, col+1], [row+1, col-1], [row+1, col], [row+1, col+1]]
+		for element in potentialUnseenFirstIteration:
+			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or 
+				tempBoard[element[0]][element[1]] == "wqueen" or tempBoard[element[0]][element[1]] == "q" or tempBoard[element[0]][element[1]] == "k"
+				or element in posSeen or element in posUnseen):
+				pass
+			else:
+				posUnseen.append(element)
+
+		return self.calcSpaceHelper(posSeen, posUnseen, tempBoard)
+
+
+
+
+
+	#Returns a list of allowed moves by the enemy king after recieving a threat representation for a board
+	def findPotentialEnemyMoves(self, threatRep):
+		kingPos = self.findPiecePos("bking", threatRep)
+		row = kingPos[0]
+		col = kingPos[1]
+		potentialMovesFirstIteration = [[row-1, col-1], [row-1, col], [row-1, col +1], [row, col-1], [row, col+1], [row+1, col-1], [row+1, col], [row+1, col+1]]
+		potentialMoves = []
+
+		for element in potentialMovesFirstIteration:
+			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or 
+				threatRep[element[0]][element[1]] == "wqueen" or threatRep[element[0]][element[1]] == "q"):
+				pass
+			else:
+				potentialMoves.append(element)
+
+		return potentialMoves
+
+
+
+
+
+	def findPiecePos(self, piece, board):
+		Pos = None
+		rowNum = 0
+		for row in board:
+			colNum = 0
+			for col in row:
+				if (col == piece):
+					Pos = [rowNum, colNum]
+
+				colNum += 1
+			rowNum +=1
+		return Pos
+
+
 
 
 	#Creates a fake board that fills all possible positions that are under threat
@@ -39,33 +116,17 @@ class ChessSimAI:
 	#with q's
 	#Returns a board with altered values
 	def AIThreatRepresentation(self, move, board):
-		tempBoard = board
+		tempBoard = copy(board)
 		if (move != None):
 			tempBoard[move[1][0]][move[1][1]] = tempBoard[move[0][0]][move[0][1]]
 			tempBoard[move[0][0]][move[0][1]] = 0
-		wqueenPosition = None
-		wkingPosition = None
-		rowNum = 0
-		for row in tempBoard:
-			colNum = 0
-			for col in row:
-				if (col == "wqueen"):
-					wqueenPosition = [rowNum, colNum]
-				elif(col == "wking"):
-					wkingPosition = [rowNum, colNum]
-
-				colNum += 1
-			rowNum += 1
-
-
+		wqueenPosition = self.findPiecePos("wqueen", tempBoard)
+		wkingPosition = self.findPiecePos("wking", tempBoard)
 		if (wkingPosition != None):
 			tempBoard = self.AIThreatAdderKing(wkingPosition, tempBoard)
 
 		if (wqueenPosition != None):
 			tempBoard = self.AIThreatAdderQueen(wqueenPosition, tempBoard)
-
-
-
 		return tempBoard
 
 	#Helper method for the AIThreatRepresentation, actually added the values in for the king
@@ -75,7 +136,7 @@ class ChessSimAI:
 		addThreatToBoardFirstIteration = [[row-1, col-1], [row-1, col], [row-1, col +1], [row, col-1], [row, col+1], [row+1, col-1], [row+1, col], [row+1, col+1]]
 		addThreatToBoard = []
 		for element in addThreatToBoardFirstIteration:
-			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or board[element[0]][element[1]] == "wqueen"):
+			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or board[element[0]][element[1]] == "wqueen" or board[element[0]][element[1]] == "bking"):
 				pass
 			else:
 				addThreatToBoard.append(element)
@@ -175,31 +236,41 @@ class ChessSimAI:
 
 		return pos
 
+
+	def cleanBoard(self, board):
+		for i in range (0, 8):
+			for j in range (0,8):
+				if (board[i][j] != 'wking' and board[i][j] != 'wqueen' and board[i][j] != 'bking'):
+					board[i][j] = 0
+
+		return board
+
 	#This is our 'main' function that calculates the AI move
 	def makeAIMove(self, board):
 
-		bestSpace = 0
-		# move = [[0,0],[0,0]]
-		move = [[0,0],[0,0]]
-		# AIThreatRepresentation = self.AIThreatRepresentation(move, board)
-		# print (AIThreatRepresentation)
+		bestSpace = 10000000
+		move = None
+		
+		AIThreatRepresentation = self.AIThreatRepresentation(move, board)
+		
 
-		# for i in range (0, 8):
-		# 	for j in range (0,8):
-		# 		if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k' or AIThreatRepresentation[i][j] == "qk"):
-		# 			pieceType = self.getPieceType(AIThreatRepresentation[i][j])
-		# 			#print (pieceType)
-		# 			potentialMove = [i, j, pieceType]
-		# 			#print ("Potenial Move is :", str(potentialMove))
-		# 			space = self.calculateEnemySpace(potentialMove, AIThreatRepresentation)
+		for i in range (0, 8):
+			for j in range (0,8):
+				if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k' or AIThreatRepresentation[i][j] == "qk"):
+					pieceType = self.getPieceType(AIThreatRepresentation[i][j])
+					
+					
+					startPos = self.getCurrentPiecePosition(pieceType, board)
+					potentialMove = [startPos, [i, j]]
+					#print (board)
+					space = self.calculateEnemySpace(potentialMove, board)
 
-		# 			#If our discovered move gets better space gain, we construct the new move as our move
-		# 			if (space > bestSpace): #MIGHT NEED TO CHANGE THIS WILL GET STUCK IN LOOP PROBS
-		# 				curPiecePos = self.getCurrentPiecePosition(potentialMove[2], board)
-		# 				move = [curPiecePos ,[potentialMove[0], potentialMove[1]]]
-		# 				bestSpace = space
+					#If our discovered move gets better space gain, we construct the new move as our move
+					if (space < bestSpace): 
+
+						move = potentialMove
+						bestSpace = space
 
 
-		# print (move)
 		move = moveToString(move)
 		return move
