@@ -27,9 +27,6 @@ class TerminalBoard():
 
     def makeMoveHuman(self):
         b = self.board
-        print ("\n")
-        print ("--------------------------------")
-        print ("\n")
         print(b)
         print("Potential moves: ")
         for potentialMove in list(b.legal_moves):

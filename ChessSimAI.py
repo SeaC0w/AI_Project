@@ -2,7 +2,7 @@ from copy import *
 
 def moveToString(move):
 	translate = ["a", "b", "c", "d", "e", "f", "g", "h"]
-	return translate[move[0][0]] + str(8 - move[0][1]) + translate[move[1][0]] + str(8 - move[1][1])
+	return translate[move[0][1]] + str(8 - move[0][0]) + translate[move[1][1]] + str(8 - move[1][0])
 
 
 class ChessSimAI:
@@ -24,18 +24,19 @@ class ChessSimAI:
 	def calculateEnemySpace(self, move, board):
 		#Recalculate the AIThreatRepresentation for the move
 		threat = self.AIThreatRepresentation(move, board)
-		print threat
 		potentialEnemyMoves = self.findPotentialEnemyMoves(threat)
 		bKingPos = self.findPiecePos('bking', threat)
 		wQueenPosition = self.findPiecePos("wqueen", threat)
 		wKingPosition = self.findPiecePos("wking", threat)
 		mostSpace = 0
+		space = 0
 		for move in potentialEnemyMoves:
 			tempBoard = [[0 for i in range(8)] for j in range(8)]
 			tempBoard[move[0]][move[1]] = 'bking'
 			tempBoard[wQueenPosition[0]][wQueenPosition[1]] = 'wqueen'
 			tempBoard[wKingPosition[0]][wKingPosition[1]] = 'wking' 
 			tempBoard = self.AIThreatRepresentation(None, tempBoard)
+			space = 0
 			space = self.calcTotalAvailableSpace(move, tempBoard)
 			if (space > mostSpace):
 				mostSpace = space
@@ -47,6 +48,8 @@ class ChessSimAI:
 		posSeen = []
 		posUnseen = [move]
 		space = self.calcSpaceHelper(posSeen, posUnseen, tempBoard)
+		if (space == None):
+			space = 0
 		return space
 
 	def calcSpaceHelper(self, posSeen, posUnseen, tempBoard):
@@ -76,7 +79,13 @@ class ChessSimAI:
 
 	#Returns a list of allowed moves by the enemy king after recieving a threat representation for a board
 	def findPotentialEnemyMoves(self, threatRep):
-		kingPos = self.findPiecePos("bking", threatRep)
+
+		tempBoard = []
+
+		for element in threatRep:
+			tempBoard.append(copy(element))
+
+		kingPos = self.findPiecePos("bking", tempBoard)
 		row = kingPos[0]
 		col = kingPos[1]
 		potentialMovesFirstIteration = [[row-1, col-1], [row-1, col], [row-1, col +1], [row, col-1], [row, col+1], [row+1, col-1], [row+1, col], [row+1, col+1]]
@@ -84,7 +93,7 @@ class ChessSimAI:
 
 		for element in potentialMovesFirstIteration:
 			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or 
-				threatRep[element[0]][element[1]] == "wqueen" or threatRep[element[0]][element[1]] == "q"):
+				tempBoard[element[0]][element[1]] == "wqueen" or tempBoard[element[0]][element[1]] == "q"):
 				pass
 			else:
 				potentialMoves.append(element)
@@ -253,6 +262,15 @@ class ChessSimAI:
 
 		return board
 
+	# def policy1(self, board):
+	# 	return True
+
+	# def policy2(self, board):
+	# 	return False
+
+	# def policy3(self, board):
+	# 	return False
+
 	#This is our 'main' function that calculates the AI move
 	def makeAIMove(self, board):
 
@@ -261,7 +279,7 @@ class ChessSimAI:
 		
 		AIThreatRepresentation = self.AIThreatRepresentation(move, board)
 		
-
+		# if (self.policy1(board)):
 		for i in range (0, 8):
 			for j in range (0,8):
 				if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k' or AIThreatRepresentation[i][j] == "qk"):
@@ -273,13 +291,17 @@ class ChessSimAI:
 					
 					space = self.calculateEnemySpace(potentialMove, board)
 					print space
-
 					#If our discovered move gets better space gain, we construct the new move as our move
-					if (space < bestSpace): 
-						print move
+					if (space < bestSpace and space > 1): 
 						move = potentialMove
 						bestSpace = space
 
+		# elif (policy2()):
 
 		move = moveToString(move)
+		print "------------------------"
+		print "\n"
+		print "AI Move: " + move
+		print "\n"
+		print "------------------------"
 		return move
