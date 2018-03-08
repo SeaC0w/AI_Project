@@ -20,15 +20,14 @@ if __name__ == "__main__":
 
 
 	ai = ChessSimAI()
-	threat = []
-	threat = ai.AIThreatRepresentation(None, board)
+	# threat = []
+	# threat = ai.AIThreatRepresentation(None, board)
 
-	print(threat)
-	print (board)
+	# print(threat)
+	# print (board)
+	move = [[0,3],[1,4]]
+	print ai.calculateDistance(move[0], move[1])
 
-	#move = [[0,3],[1,4]]
-	# threat = ai.calculateEnemySpace(move, board)
-	# print threat
 
 
 

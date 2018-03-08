@@ -6,7 +6,7 @@ from ChessSimAI import *
 
 class TerminalBoard():
     def __init__(self):
-        self.board = chess.Board(fen='6k1/8/8/8/8/8/8/Q6K b - - 0 0')
+        self.board = chess.Board(fen='6k1/8/8/8/8/7K/8/Q7 b - - 0 0')
 
     def printBoard(self):
         print(self.board)
@@ -39,6 +39,7 @@ class TerminalBoard():
             if move in b.legal_moves:
                 goodInput = True
                 b.push(move)
+                print(b)
             else:
                 move = input("Invalid move, type another move: ")
                 move = chess.Move.from_uci(move)
