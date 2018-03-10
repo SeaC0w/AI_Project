@@ -3,6 +3,8 @@ import sys
 import chess
 import chess.svg
 from ChessSimAI import *
+from BoardGraphics import *
+from ChessGameTree import *
 
 class TerminalBoard():
     def __init__(self):
@@ -25,12 +27,22 @@ class TerminalBoard():
             print("The AI hath broketh the law")
         self.board.push(move)
 
+    def makeMoveTreeAI(self):
+        board = fenToBoard(self.getBoard().board_fen())
+        AI = AdversSearchAI()
+        move = AI.makeAIMove(board)
+        move = chess.Move.from_uci(move)
+
+        if move not in self.board.legal_moves:
+            print("The AI hath broketh the law")
+        self.board.push(move)
+
     def makeMoveHuman(self):
         b = self.board
         print(b)
         print("Potential moves: ")
         for potentialMove in list(b.legal_moves):
-            print potentialMove
+            print(potentialMove)
 
         goodInput = False
         move = input("Type move in string representation: ")
@@ -43,6 +55,26 @@ class TerminalBoard():
             else:
                 move = input("Invalid move, type another move: ")
                 move = chess.Move.from_uci(move)
+
+    def getFen(self):
+        return self.board.epd().split()[0]
+
+    # ONLY used for passing positions to BoardGraphics
+    def getPiecePositions(self):
+        currFen = self.getFen()
+        pieces = ["Q", "K", "k", "q"]
+        lines = currFen.split("/")
+        piecePlaces = {}
+        for i in range(len(lines)):
+            j = 0
+            for char in lines[i]:
+                if char not in pieces:
+                    j += int(char)
+                else:
+                    # piecePlaces[char] = (j,7-i)
+                    piecePlaces[char] = (i,j)
+                    j += 1
+        return piecePlaces
 
 
 def fenToBoard(fen):
@@ -64,9 +96,14 @@ def fenToBoard(fen):
 def main():
     #board = chess.Board(fen='k7/p7/1p6/8/8/8/8/K5Q1 w - - 0 0')
     board = TerminalBoard()
+    shownBoard = BoardGraphics()
+    shownBoard.drawGrid()
     turn = 1
 
     while not board.getBoard().is_game_over():
+        print("~~~~~~~~~~~~~~~~~~~")
+        shownBoard.updateBoard(board.getPiecePositions())
+        print("~~~~~~~~~~~~~~~~~~~")
 
         if (turn == 1):
             board.makeMoveHuman()
@@ -75,10 +112,10 @@ def main():
         else:
             board.makeMoveAI()
             turn = 1
-            
-        
-        
-        
+
+
+
+
 
 if __name__ == "__main__":
     main()
