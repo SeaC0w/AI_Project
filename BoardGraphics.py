@@ -1,6 +1,6 @@
 from graphics import *
 
-windowHeight = 800
+windowHeight = 650
 windowWidth = 650
 imgDict = {"Q":"wqueen.png", "K":"wking.png", "k":"bking.png", "q":"bqueen.png"}
 
@@ -32,6 +32,9 @@ class BoardGraphics():
 		for pieceName in list(positions.keys()):
 			p = positions[pieceName]
 			c = self.boxes[p[0]][p[1]].getCenter()
+			
+			# comment out the lines with i, comment in those with t
+			# if images are not working with your system
 			# t = Text(c, pieceName)
 			# t.draw(self.window)
 			# self.texts.append(t)

@@ -1,18 +1,15 @@
 from copy import *
 import math
 
+# translates an AI move into a move that can be used by python-chess module
 def moveToString(move):
 	translate = ["a", "b", "c", "d", "e", "f", "g", "h"]
 	return translate[move[0][1]] + str(8 - move[0][0]) + translate[move[1][1]] + str(8 - move[1][0])
 
 
 class ChessSimAI:
-
-
 	def __init__(self):
 		pass
-
-
 
 	'''
 	We are calculating optimal moves for the AI based on the theory that minimization
@@ -35,13 +32,14 @@ class ChessSimAI:
 			tempBoard = [[0 for i in range(8)] for j in range(8)]
 			tempBoard[pmove[0]][pmove[1]] = 'bking'
 			tempBoard[wQueenPosition[0]][wQueenPosition[1]] = 'wqueen'
-			tempBoard[wKingPosition[0]][wKingPosition[1]] = 'wking' 
+			tempBoard[wKingPosition[0]][wKingPosition[1]] = 'wking'
 			tempBoard = self.AIThreatRepresentation(None, tempBoard)
 			space = 0
 			space = self.calcTotalAvailableSpace(pmove, tempBoard)
 			if (space > mostSpace):
 				mostSpace = space
 		return space
+
 
 	#Method that conducts a breadth first search given a position to see the amount
 	#of space given to the enemy king
@@ -52,6 +50,7 @@ class ChessSimAI:
 		if (space == None):
 			space = 0
 		return space
+
 
 	def calcSpaceHelper(self, posSeen, posUnseen, tempBoard):
 
@@ -65,7 +64,7 @@ class ChessSimAI:
 		col = pos[1]
 		potentialUnseenFirstIteration = [[row-1, col-1], [row-1, col], [row-1, col +1], [row, col-1], [row, col+1], [row+1, col-1], [row+1, col], [row+1, col+1]]
 		for element in potentialUnseenFirstIteration:
-			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or 
+			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or
 				tempBoard[element[0]][element[1]] == "wqueen" or tempBoard[element[0]][element[1]] == "q" or tempBoard[element[0]][element[1]] == "k"
 				or element in posSeen or element in posUnseen or tempBoard[element[0]][element[1]] == "kq"):
 				pass
@@ -73,10 +72,6 @@ class ChessSimAI:
 				posUnseen.append(element)
 
 		return self.calcSpaceHelper(posSeen, posUnseen, tempBoard)
-
-
-
-
 
 	#Returns a list of allowed moves by the enemy king after recieving a threat representation for a board
 	def findPotentialEnemyMoves(self, threatRep):
@@ -93,16 +88,13 @@ class ChessSimAI:
 		potentialMoves = []
 
 		for element in potentialMovesFirstIteration:
-			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or 
+			if (element[0] < 0 or element[1] < 0 or element[0] > 7 or element[1] > 7 or
 				tempBoard[element[0]][element[1]] == "wqueen" or tempBoard[element[0]][element[1]] == "q"):
 				pass
 			else:
 				potentialMoves.append(element)
 
 		return potentialMoves
-
-
-
 
 
 	def findPiecePos(self, piece, board):
@@ -117,8 +109,6 @@ class ChessSimAI:
 				colNum += 1
 			rowNum +=1
 		return Pos
-
-
 
 
 	#Creates a fake board that fills all possible positions that are under threat
@@ -250,38 +240,29 @@ class ChessSimAI:
 
 		return pos
 
-
-	# def cleanBoard(self, board):
-	# 	for i in range (0, 8):
-	# 		for j in range (0,8):
-	# 			if (board[i][j] != 'wking' and board[i][j] != 'wqueen' and board[i][j] != 'bking'):
-	# 				board[i][j] = 0
-
-	# 	return board
-
 	def policy1(self, board):
 		space = self.calculateEnemySpace(None, board)
 		if (space == 2):
 			return False
 
 		else:
-			print "P1"
+			print("P1")
 			return True
 
 	def policy2(self, board):
-		
+
 		startPos = self.getCurrentPiecePosition("wking", board)
 		enemyKingPos = self.getCurrentPiecePosition("bking", board)
 		curDistance = self.calculateDistance(startPos, enemyKingPos)
 		if (curDistance < 3):
 			return False
 		else:
-			print "P2"
-			print curDistance
+			print("P2")
+			print(curDistance)
 			return True
 
 	def policy3(self, board):
-		print "P3"
+		print("P3")
 		return True
 
 	#Calculates the euclidean distance
@@ -289,29 +270,33 @@ class ChessSimAI:
 		return math.sqrt((pos[0] - enemyPos[0])**2 + (pos[1] - enemyPos[1])**2)
 
 
+	def checkAdjacency(self, pos, enemyPos):
+		if (abs(pos[0] - enemyPos[0]) <= 1) and (abs(pos[1] - enemyPos[1]) <= 1):
+			return True
+		return False
 
 
 	#This is our 'main' function that calculates the AI move
 	def makeAIMove(self, board):
-		
+
 		move = None
-		
+
 		AIThreatRepresentation = self.AIThreatRepresentation(move, board)
-		
+
 		if (self.policy1(board)):
 			bestSpace = 10000000
 			for i in range (0, 8):
 				for j in range (0,8):
 					if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k' or AIThreatRepresentation[i][j] == "kq"):
 						pieceType = self.getPieceType(AIThreatRepresentation[i][j])
-						
-						
+
 						startPos = self.getCurrentPiecePosition(pieceType, board)
+						enemyKingPos = self.getCurrentPiecePosition("bking", board)
 						potentialMove = [startPos, [i, j]]
-						
+
 						space = self.calculateEnemySpace(potentialMove, board)
 						#If our discovered move gets better space gain, we construct the new move as our move
-						if (space < bestSpace and space > 1): 
+						if (space < bestSpace and space > 1 and not self.checkAdjacency(potentialMove[1], enemyKingPos)):
 							move = potentialMove
 							bestSpace = space
 
@@ -334,24 +319,24 @@ class ChessSimAI:
 				for j in range (0,8):
 					if (AIThreatRepresentation[i][j] == 'q' or AIThreatRepresentation[i][j] == 'k' or AIThreatRepresentation[i][j] == "kq"):
 						pieceType = self.getPieceType(AIThreatRepresentation[i][j])
-						
-						
+
+
 						startPos = self.getCurrentPiecePosition(pieceType, board)
 						potentialMove = [startPos, [i, j]]
-						
+
 						space = self.calculateEnemySpace(potentialMove, board)
 						#print space
 						#If our discovered move gets better space gain, we construct the new move as our move
-						if (space < bestSpace): 
+						if (space < bestSpace):
 							move = potentialMove
 							bestSpace = space
 
 
 
 		move = moveToString(move)
-		print "------------------------"
-		print "\n"
-		print "AI Move: " + move
-		print "\n"
-		print "------------------------"
+		print("------------------------")
+		print("\n")
+		print("AI Move: " + move)
+		print("\n")
+		print("------------------------")
 		return move
