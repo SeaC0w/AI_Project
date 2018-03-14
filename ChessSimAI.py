@@ -246,7 +246,7 @@ class ChessSimAI:
 			return False
 
 		else:
-			print("P1")
+			# print("P1")
 			return True
 
 	def policy2(self, board):
@@ -257,12 +257,12 @@ class ChessSimAI:
 		if (curDistance < 3):
 			return False
 		else:
-			print("P2")
-			print(curDistance)
+			# print("P2")
+			# print(curDistance)
 			return True
 
 	def policy3(self, board):
-		print("P3")
+		# print("P3")
 		return True
 
 	#Calculates the euclidean distance
@@ -334,9 +334,9 @@ class ChessSimAI:
 
 
 		move = moveToString(move)
-		print("------------------------")
-		print("\n")
-		print("AI Move: " + move)
-		print("\n")
-		print("------------------------")
+		# print("------------------------")
+		# print("\n")
+		# print("AI Move: " + move)
+		# print("\n")
+		# print("------------------------")
 		return move

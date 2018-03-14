@@ -2,7 +2,6 @@
 import sys
 import chess
 import time
-import chess.svg
 from ChessSimAI import *
 from BoardGraphics import *
 from ChessGameTree import *
@@ -105,7 +104,6 @@ def fenToBoard(fen):
     return board
 
 def main():
-    #board = chess.Board(fen='k7/p7/1p6/8/8/8/8/K5Q1 w - - 0 0')
     # board = TerminalBoard('2k5/8/8/7K/8/4Q3/8/8')
     board = TerminalBoard()
     shownBoard = BoardGraphics()
@@ -115,14 +113,17 @@ def main():
     while not board.getBoard().is_game_over():
         shownBoard.updateBoard(board.getPiecePositions())
         if (turn == 1):
+            print()
+            print('===================')
             board.makeMoveHuman()
             turn = 0
         else:
-            start = time.time()
+            # start = time.time()
             board.makeMoveAI()
-            print("TimeTake: " + str(time.time()-start))
+            # print("TimeTake: " + str(time.time()-start))
             turn = 1
 
+    print("FINAL BOARDSTATE")
     print(board.getBoard())
     if board.getBoard().is_checkmate() and turn == 1:
         message = "AI wins"
