@@ -6,11 +6,11 @@ import chess.svg
 from ChessSimAI import *
 from BoardGraphics import *
 from ChessGameTree import *
-# f='8/8/2k5/7K/8/8/8/4Q3'
+# f='8/8/2k5/7K/8/8/8/4Q3' | '6k1/8/8/8/8/7K/8/Q7'
 class TerminalBoard():
     # initialization contains a default initial board state, can be specified
     # however, the game always starts with black (the human) playing
-    def __init__(self, f='6k1/8/8/8/8/7K/8/Q7'):
+    def __init__(self, f='8/1k6/8/8/6Q1/3K4/8/8'):
         f += " b - - 0 0"
         self.board = chess.Board(f)
 
